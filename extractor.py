@@ -46,7 +46,11 @@ async def extract_clean_article(url: str) -> dict:
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=True,
-            args=["--disable-blink-features=AutomationControlled"]
+            args=[
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-blink-features=AutomationControlled",
+            ],
         )
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
@@ -110,19 +114,18 @@ async def extract_clean_article(url: str) -> dict:
 
     # 1. Remove boilerplate, ads, hidden SEO transcripts, and carousel UI
     for selector in [
-     "header", "footer", "nav", "aside", "button", ".sidebar", ".ad-container",
-     "#comments", ".utility-bar", ".header-wrapper", ".footer-wrapper",
-     "#sidenav", ".w3-sidebar", "#leftmenuinner", "#topnav", ".w3-bar",
-     ".w3-hide-small", "[class*='ad']", "[id*='ad_']", "[class*='promo']",
-     "[class*='cookie']", "[class*='login']", "[class*='signup']",
-     "script", "style", "iframe", ".gfg-burr-ad", ".cookie-consent",
-     ".rightBar", ".leftBar", ".article_bottom_text",
-     ".carousel-control-prev", ".carousel-control-next", ".slick-arrow",
-     ".carousel-indicators", ".slick-dots", ".swiper-pagination",
-     ".modal", ".lightbox", "[aria-hidden='true']", ".sr-only", ".visually-hidden",
-     "[hidden]", "[style*='display: none']", "[style*='display:none']",
-     "[style*='visibility: hidden']", "[style*='visibility:hidden']",
-     "[style*='opacity: 0']", "[style*='opacity:0']"
+        "header", "footer", "nav", "aside", "button", ".sidebar", ".ad-container",
+        "#comments", ".utility-bar", ".header-wrapper", ".footer-wrapper",
+        ".carousel", ".slider", ".swiper", ".slick-slider",
+        ".carousel-control-prev", ".carousel-control-next", ".slick-arrow",
+        ".carousel-indicators", ".slick-dots", ".swiper-pagination",
+        "[class*='carousel']", "[class*='slider']",
+        ".modal", ".lightbox", "[aria-hidden='true']", ".sr-only", ".visually-hidden",
+        "[hidden]", "[style*='display: none']", "[style*='display:none']",
+        "[style*='visibility: hidden']", "[style*='visibility:hidden']",
+        "[style*='opacity: 0']", "[style*='opacity:0']",
+        "script", "style", "iframe", ".gfg-burr-ad", ".cookie-consent",
+        ".rightBar", ".leftBar", ".article_bottom_text",
     ]:
         for tag in soup.select(selector):
             if tag.parent is not None:
