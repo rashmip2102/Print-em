@@ -7,13 +7,17 @@
     size: A4;
     margin: 20mm 15mm 20mm 15mm;
   }
-
+*, *::before, *::after {
+  box-sizing: border-box;
+}
   body {
-    font-size: 11pt;
-    line-height: 1.6;
-    color: #222;
-  }
-
+  font-size: 11pt;
+  line-height: 1.6;
+  color: #222;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
   /* Custom Layout Themes */
   body.theme-textbook { font-family: 'Georgia', serif; }
   body.theme-revision { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 10.5pt; line-height: 1.5; }
@@ -61,16 +65,20 @@
     border-left: 3px solid #1e5288;
     border-radius: 4px;
     padding: 10px 12px;
+    max-width: 100%;
     font-family: 'Consolas', 'Courier New', monospace;
     font-size: 9pt;
     line-height: 1.45;
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
     word-wrap: break-word;
   }
-
   code {
     font-family: 'Consolas', 'Courier New', monospace;
     font-size: 9pt;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-wrap: break-word;
   }
 
   table {
@@ -84,8 +92,10 @@
     padding: 7px 10px;
     text-align: left;
     font-size: 9.5pt;
+    overflow-wrap: anywhere;
     word-wrap: break-word;
   }
+
   th {
     background-color: #f0f4f8;
     font-weight: bold;
@@ -93,7 +103,10 @@
 
   img {
     max-width: 100%;
+    max-height: 220mm;
+    width: auto;
     height: auto;
+    object-fit: contain;
     display: block;
     margin: 14px auto;
   }
