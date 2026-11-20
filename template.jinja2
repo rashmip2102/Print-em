@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page {
+    size: A4;
+    margin: 20mm 15mm 20mm 15mm;
+  }
+
+  body {
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #222;
+  }
+
+  /* Custom Layout Themes */
+  body.theme-textbook { font-family: 'Georgia', serif; }
+  body.theme-revision { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 10.5pt; line-height: 1.5; }
+  body.theme-developer { font-family: 'Consolas', 'Courier New', monospace; font-size: 9.5pt; }
+  body.theme-workbook { font-family: 'Arial', sans-serif; }
+
+  h1 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 20pt;
+    color: #0f2b48;
+    border-bottom: 2px solid #0f2b48;
+    padding-bottom: 6px;
+  }
+  h2 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 15pt;
+    color: #1e5288;
+    margin-top: 18pt;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12.5pt;
+    color: #333;
+    page-break-after: avoid;
+  }
+
+  .math-inline {
+    font-family: 'Cambria Math', 'Georgia', serif;
+    font-style: italic;
+    background-color: #f8fafc;
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: #0f2b48;
+  }
+
+  pre, table, figure {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  pre {
+    background-color: #f4f6f8;
+    border: 1px solid #d0d7de;
+    border-left: 3px solid #1e5288;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9pt;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9pt;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    table-layout: fixed;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 7px 10px;
+    text-align: left;
+    font-size: 9.5pt;
+    word-wrap: break-word;
+  }
+  th {
+    background-color: #f0f4f8;
+    font-weight: bold;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 14px auto;
+  }
+
+  .summary-box {
+    background: #eef6fc;
+    padding: 12px 16px;
+    border-left: 4px solid #1e5288;
+    margin-bottom: 18px;
+    break-inside: avoid;
+  }
+
+  .practice-section {
+    page-break-before: always;
+    margin-top: 20px;
+  }
+
+  .answer-appendix {
+    page-break-before: always;
+    background-color: #fff8f0;
+    padding: 15px;
+    border: 1px solid #ffe0b2;
+  }
+</style>
+</head>
+<body class="theme-{{ theme | default('textbook') }}">
+  <h1>{{ title }}</h1>
+  <p><em>Source: <a href="{{ source_url }}">{{ source_url }}</a></em></p>
+  <hr>
+
+  {% if study_kit and study_kit.summary %}
+  <div class="summary-box">
+    <h3>Key Concept Summary</h3>
+    <ul>
+      {% for point in study_kit.summary %}
+      <li>{{ point }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="content-body">
+    {{ clean_html | safe }}
+  </div>
+
+  {% if study_kit and (study_kit.saq or study_kit.laq or study_kit.mcqs) %}
+  <div class="practice-section">
+    <h2>Practice Workbook</h2>
+
+    {% if study_kit.saq %}
+    <h3>Short Answer Questions</h3>
+    <ol>
+      {% for item in study_kit.saq %}
+      <li><strong>{{ item.question }}</strong></li>
+      {% endfor %}
+    </ol>
+    {% endif %}
+
+    {% if study_kit.laq %}
+    <h3>Long Answer Questions</h3>
+    <ol>
+      {% for item in study_kit.laq %}
+      <li><strong>{{ item.question }}</strong></li>
+      {% endfor %}
+    </ol>
+    {% endif %}
+
+    {% if study_kit.mcqs %}
+    <h3>Multiple Choice Questions</h3>
+    <ol>
+      {% for mcq in study_kit.mcqs %}
+      <li>
+        <strong>{{ mcq.question }}</strong>
+        <ul>
+          {% for opt in mcq.options %}
+          <li>{{ opt }}</li>
+          {% endfor %}
+        </ul>
+      </li>
+      {% endfor %}
+    </ol>
+    {% endif %}
+  </div>
+
+  <div class="answer-appendix">
+    <h2>Solutions &amp; Answer Key</h2>
+
+    {% if study_kit.saq %}
+    <h3>Short Answer Solutions</h3>
+    <ol>
+      {% for item in study_kit.saq %}
+      <li><strong>Q: {{ item.question }}</strong><br><em>Answer:</em> {{ item.sample_answer }}</li>
+      {% endfor %}
+    </ol>
+    {% endif %}
+
+    {% if study_kit.laq %}
+    <h3>Long Answer Detailed Solutions</h3>
+    <ol>
+      {% for item in study_kit.laq %}
+      <li><strong>Q: {{ item.question }}</strong><br><em>Solution:</em> {{ item.detailed_solution }}</li>
+      {% endfor %}
+    </ol>
+    {% endif %}
+
+    {% if study_kit.mcqs %}
+    <h3>MCQ Answers</h3>
+    <ol>
+      {% for mcq in study_kit.mcqs %}
+      <li><strong>Correct:</strong> {{ mcq.correct_answer }} &mdash; {{ mcq.explanation }}</li>
+      {% endfor %}
+    </ol>
+    {% endif %}
+  </div>
+  {% endif %}
+</body>
+</html>
