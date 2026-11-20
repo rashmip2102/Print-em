@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field, HttpUrl
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse
 
+os.environ.setdefault("PLAYWRIGHT_BROWSERS_PATH", "/opt/render/project/.cache/ms-playwright")
 from extractor import extract_clean_article
 from ai_generator import generate_full_study_kit
 from pdf_compiler import compile_pdf
@@ -186,7 +187,7 @@ async def ui_home():
       </style>
     </head>
     <body>
-      <h1>Study PDF Engine</h1>
+      <h1>Print 'em</h1>
       <p class="sub">Turn any educational article into a printable study PDF with summary & practice questions.</p>
       <form id="pdf-form">
         <label for="url">Article URL</label>
