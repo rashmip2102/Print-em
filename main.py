@@ -171,7 +171,7 @@ async def ui_home():
     <html lang="en">
     <head>
       <meta charset="UTF-8" />
-      <title>Study PDF Engine</title>
+      <title>Print 'em</title>
       <style>
         body { font-family: system-ui, sans-serif; max-width: 680px; margin: 40px auto; padding: 0 16px; color: #1f2937; }
         h1 { margin-bottom: 6px; }
