@@ -19,7 +19,7 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 COMPILE_SEMAPHORE = asyncio.Semaphore(2)
 
 app = FastAPI(
-    title="Study PDF Engine API",
+    title="Print 'em",
     description="Convert educational articles into clean textbook PDFs with AI or offline study kits.",
     version="1.0.0",
 )
