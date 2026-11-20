@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+playwright
+beautifulsoup4
+jinja2
+pydantic
+openai
+google-genai
+httpx
