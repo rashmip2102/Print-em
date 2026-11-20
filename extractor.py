@@ -120,6 +120,7 @@ async def extract_clean_article(url: str) -> dict:
         ".carousel-control-prev", ".carousel-control-next", ".slick-arrow",
         ".carousel-indicators", ".slick-dots", ".swiper-pagination",
         "[class*='carousel']", "[class*='slider']",
+        "aside",
         ".modal", ".lightbox", "[aria-hidden='true']", ".sr-only", ".visually-hidden",
         "[hidden]", "[style*='display: none']", "[style*='display:none']",
         "[style*='visibility: hidden']", "[style*='visibility:hidden']",
@@ -146,13 +147,14 @@ async def extract_clean_article(url: str) -> dict:
         if tag.parent is None or tag.find("img"):
             continue
         txt = tag.get_text(strip=True)
-        if re.fullmatch(r"(\d+\s*/\s*\d+|<\s*(II|\|\||▶|►)\s*>)", txt):
+        if re.fullmatch(r"(\d+\s*/\s*\d+|<|>|\|\||II|▶|◀|►|◄|<\s*(II|\|\||▶|◀|►|◄)\s*>)", txt):
             tag.decompose()
             continue
         # Strip GFG's hidden image-transcript blocks placed right inside/beside image containers
         classes = " ".join(tag.get("class", [])).lower()
         if any(k in classes for k in ("transcript", "ocr", "caption-hidden", "carousel-control", "slider-control")):
             tag.decompose()
+            continue
 
     # 3. Normalize all GFG code containers into clean <pre><code> blocks
     code_candidates = article_body.select(
@@ -205,7 +207,15 @@ async def extract_clean_article(url: str) -> dict:
         if norm_src in seen_srcs:
             img.decompose()
             continue
-
+        is_tiny = False
+        for dim_attr in ("width", "height"):
+            dim_val = img.get(dim_attr)
+            if dim_val and str(dim_val).strip().isdigit() and int(str(dim_val).strip()) < 40:
+                is_tiny = True
+                break
+        if is_tiny:
+            img.decompose()
+            continue
         seen_srcs.add(norm_src)
         img["src"] = src
         if img.has_attr("style"):
